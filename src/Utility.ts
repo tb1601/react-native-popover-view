@@ -1,5 +1,5 @@
 import { RefObject, ComponentClass, Component } from 'react';
-import { NativeModules, findNodeHandle, StyleProp, ViewStyle, StyleSheet } from 'react-native';
+import { NativeModules, findNodeHandle, StyleProp, ViewStyle, StyleSheet, Platform } from 'react-native';
 import { Placement, Point, Rect, Size } from './Types';
 import { DEFAULT_ARROW_SIZE, DEFAULT_BORDER_RADIUS } from './Constants';
 
@@ -9,14 +9,26 @@ type RefType = RefObject<number | Component<any, any, any> | ComponentClass<any,
 
 export function getRectForRef(ref: RefType): Promise<Rect> {
   return new Promise((resolve, reject) => {
-    if (ref.current) {
-      NativeModules.UIManager.measure(
-        findNodeHandle(ref.current),
-        (_1: unknown, _2: unknown, width: number, height: number, x: number, y: number) =>
-          resolve(new Rect(x, y, width, height))
-      );
+    if (Platform.OS === 'android') {
+      if (!ref.current) {
+        reject(new Error("Reference is not set or the component is not mounted"));
+        return;
+      }
+  
+      // Wait for the next layout event
+      (ref.current as any).measure((x: number, y: number, width: number, height: number, _pageX: number, _pageY: number) => {
+        resolve(new Rect(Number(_pageX), Number(_pageY), Number(width), Number(height) ));
+      });
     } else {
-      reject(new Error('getRectForRef - current is not set'));
+      if (ref.current) {
+        NativeModules.UIManager.measure(
+          findNodeHandle(ref.current),
+          (_1: unknown, _2: unknown, width: number, height: number, x: number, y: number) =>
+            resolve(new Rect(x, y, width, height))
+        );
+      } else {
+        reject(new Error('getRectForRef - current is not set'));
+      }
     }
   });
 }
