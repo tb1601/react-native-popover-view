@@ -1,10 +1,10 @@
 {
-  "name": "react-native-popover-view",
-  "version": "5.1.9",
+  "name": "react-native-popover-view-custom",
+  "version": "5.1.10",
   "description": "A <Popover /> component for react-native iOS, Android, and Web",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "author": "Peter Steffey <steffeydev@icloud.com> (https://github.com/steffeydev)",
+  "author": "ThienBui",
   "keywords": [
     "react-component",
     "react-native",
@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:steffeydev/react-native-popover-view.git"
+    "url": "git@github.com:tb1601/react-native-popover-view.git"
   },
   "devDependencies": {
     "@types/node": "^14.0.11",
